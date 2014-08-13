@@ -43,6 +43,14 @@
 	<bean id="gDao" class="uoc.edu.svrKpax.dao.GameDaoImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	
+	<bean id="dDao" class="uoc.edu.svrKpax.dao.GameDetailDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="imDao" class="uoc.edu.svrKpax.dao.GameImageDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 
 	<bean id="lDao" class="uoc.edu.svrKpax.dao.GameLikeDaoImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
@@ -55,6 +63,23 @@
 	<bean id="scDao" class="uoc.edu.svrKpax.dao.GameScoreDaoImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	
+	<bean id="cDao" class="uoc.edu.svrKpax.dao.CategoryDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="comDao" class="uoc.edu.svrKpax.dao.CommentDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="gvDao" class="uoc.edu.svrKpax.dao.GameViewDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<bean id="tDao" class="uoc.edu.svrKpax.dao.TagDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
 	<!-- END GAME -->
 	<!-- END DAOS -->
 
@@ -77,6 +102,19 @@
 	<bean id="gBo" class="uoc.edu.svrKpax.bussines.GameBOImp">
 		<property name="sBo" ref="sBo" />
 		<property name="gDao" ref="gDao" />
+		<property name="gvDao" ref="gvDao" />
+		<property name="cDao" ref="cDao" />
+	</bean>
+	
+	<bean id="dBo" class="uoc.edu.svrKpax.bussines.GameDetailBOImp">
+		<property name="sBo" ref="sBo" />
+		<property name="dDao" ref="dDao" />
+	</bean>
+	
+	<bean id="imBo" class="uoc.edu.svrKpax.bussines.GameImageBOImp">
+		<property name="sBo" ref="sBo" />
+		<property name="imDao" ref="imDao" />
+		<property name="gDao" ref="gDao" />
 	</bean>
 
 	<bean id="lBo" class="uoc.edu.svrKpax.bussines.GameLikeBOImp">
@@ -97,6 +135,23 @@
 		<property name="gBo" ref="gBo" />
 		<property name="scDao" ref="scDao" />
 		<property name="uDao" ref="uDao" />
+	</bean>
+	
+	<bean id="tagBo" class="uoc.edu.svrKpax.bussines.TagBOImp">
+		<property name="sBo" ref="sBo" />
+		<property name="gDao" ref="gDao" />
+		<property name="tDao" ref="tDao" />
+	</bean>
+	
+	<bean id="catBo" class="uoc.edu.svrKpax.bussines.CategoryBOImp">
+		<property name="sBo" ref="sBo" />
+		<property name="cDao" ref="cDao" />
+	</bean>
+	
+	<bean id="comBo" class="uoc.edu.svrKpax.bussines.CommentBOImp">
+		<property name="sBo" ref="sBo" />
+		<property name="comDao" ref="comDao" />
+		<property name="gDao" ref="gDao" />
 	</bean>
 	<!-- END GAME -->
 	<!-- END BUSSINES -->

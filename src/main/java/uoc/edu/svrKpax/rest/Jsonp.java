@@ -1,7 +1,11 @@
 package uoc.edu.svrKpax.rest;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -11,10 +15,13 @@ import javax.ws.rs.core.MediaType;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import uoc.edu.svrKpax.bussines.CategoryBO;
+import uoc.edu.svrKpax.bussines.CommentBO;
 import uoc.edu.svrKpax.bussines.GameBO;
 import uoc.edu.svrKpax.bussines.GameInstanceBO;
 import uoc.edu.svrKpax.bussines.GameLikeBO;
 import uoc.edu.svrKpax.bussines.GameScoreBO;
+import uoc.edu.svrKpax.bussines.TagBO;
 
 import com.sun.jersey.api.json.JSONWithPadding;
 import com.sun.jersey.spi.inject.Inject;
@@ -31,16 +38,30 @@ public class Jsonp {
 	private GameInstanceBO iBo;
 	@Inject
 	private GameScoreBO scBo;
-
+	@Inject
+	private CategoryBO catBo;
+	@Inject
+	private TagBO tagBo;
+	@Inject
+	private CommentBO comBo;
 	
 	/* GAMES */
-	@GET
+	/*@GET
 	@Path("/{param}/list")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces("application/x-javascript")
 	public JSONWithPadding getGamesJsonp(@PathParam("param") String campusSession,@QueryParam("jsoncallback") String callback) {
 		//return gBo.listGames(campusSession);
 		return new JSONWithPadding(gBo.listGames(campusSession), callback);
+	}*/
+	
+	@POST
+	@Path("/{param}/list/{idOrderer}/{idFilterer}")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces("application/x-javascript")
+	public JSONWithPadding getGamesJsonp(@PathParam("param") String campusSession, @PathParam("idOrderer") int idOrderer, @PathParam("idFilterer") int idFilterer, @FormParam("fields") List<String> fields, @FormParam("values") List<String> values, @QueryParam("jsoncallback") String callback) {
+		//return gBo.listGames(campusSession);
+		return new JSONWithPadding(gBo.listGames(campusSession, idOrderer, idFilterer, fields, values), callback);
 	}
 		
 	@GET
@@ -51,7 +72,41 @@ public class Jsonp {
 		return new JSONWithPadding(gBo.getGame(idGame,secretSession),callback);
 	}
 	
-
+	/* categories */
+	@GET
+	@Path("/category/{param}/list")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces("application/x-javascript")
+	public JSONWithPadding getCategoriesJsonp (@PathParam("param") String campusSession, @QueryParam("jsoncallback") String callback){
+		return new JSONWithPadding(catBo.listCategories(campusSession), callback);
+	}
+	
+	@GET
+	@Path("/category/{param}/get/{id}")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces("application/x-javascript")
+	public JSONWithPadding getCategoryJsonp(@PathParam("param") String campusSession, @PathParam("id") int idCategory, @QueryParam("jsoncallback") String callback){	
+		return new JSONWithPadding(catBo.getCategory(campusSession, idCategory),callback);
+	}
+	
+	/* tag */
+	@GET
+	@Path("/tag/{param}/list/{id}")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces("application/x-javascript")
+	public JSONWithPadding getTagsGameJsonp(@PathParam("param") String campusSession, @PathParam("id") int idGame, @QueryParam("jsoncallback") String callback) {
+		return new JSONWithPadding(tagBo.listTagsGame(campusSession, idGame), callback);
+	}
+	
+	/* comment */
+	@GET
+	@Path("/comment/{param}/list/{id}")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces("application/x-javascript")
+	public JSONWithPadding getCommentsGameJsonp (@PathParam("param") String campusSession, @PathParam("id") int idGame, @QueryParam("jsoncallback") String callback){
+		return new JSONWithPadding(comBo.listCommentsGame(campusSession, idGame), callback);
+	}
+	
 	/* likes */
 	@GET
 	@Path("/like/{param}/get/{id}")
@@ -151,6 +206,30 @@ public class Jsonp {
 
 	public GameScoreBO getScBo() {
 		return scBo;
+	}
+
+	public TagBO getTagBo() {
+		return tagBo;
+	}
+
+	public void setTagBo(TagBO tagBo) {
+		this.tagBo = tagBo;
+	}
+
+	public CommentBO getComBo() {
+		return comBo;
+	}
+
+	public void setComBo(CommentBO comBo) {
+		this.comBo = comBo;
+	}
+
+	public CategoryBO getCatBo() {
+		return catBo;
+	}
+
+	public void setCatBo(CategoryBO catBo) {
+		this.catBo = catBo;
 	}
 
 }

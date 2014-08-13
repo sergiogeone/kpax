@@ -16,7 +16,7 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de datos: `kpac`
+-- Base de datos: `kpax`
 --
 
 -- --------------------------------------------------------
@@ -31,6 +31,9 @@ CREATE TABLE IF NOT EXISTS `Game` (
   `grantPublicAccess` tinyint(1) DEFAULT '1',
   `secretGame` varchar(150) DEFAULT NULL,
   `privateKey` text,
+  `idCategory` int(11) DEFAULT '0',
+  `creationDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `developer` varchar(45) NOT NULL DEFAULT '',
   PRIMARY KEY (`idGame`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=124 ;
 
@@ -63,6 +66,35 @@ CREATE TABLE IF NOT EXISTS `GameInstance` (
   PRIMARY KEY (`idGameInstance`),
   KEY `GameInstance_Game` (`idGame`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=25 ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `GameDetail`
+--
+
+CREATE TABLE IF NOT EXISTS `GameDetail` (
+  `idGameDetail` int(11) NOT NULL AUTO_INCREMENT,
+  `gameId` int(11) NOT NULL,
+  `image` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`idGameImage`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `GameImage`
+--
+
+CREATE TABLE IF NOT EXISTS `GameImage` (
+  `idGameImage` int(11) NOT NULL AUTO_INCREMENT,
+  `gameId` int(11) NOT NULL,
+  `description` text,
+  `logo` varchar(150) DEFAULT NULL,
+  `banner` varchar(150) DEFAULT NULL,
+  `videourl` varchar(150) DEFAULT NULL,
+  PRIMARY KEY (`idGameDetail`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -204,3 +236,51 @@ CREATE TABLE IF NOT EXISTS `UserRealm` (
   KEY `UserRealm_User` (`idUser`),
   KEY `UserRealm_Realm` (`idRealm`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Estructura de tabla para la tabla `Category`
+--
+
+CREATE TABLE IF NOT EXISTS `Category` (
+  `idCategory` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  PRIMARY KEY (`idCategory`),
+  UNIQUE KEY `name` (`name`),
+  UNIQUE KEY `name_2` (`name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+
+--
+-- Estructura de tabla para la tabla `Comment`
+--
+
+CREATE TABLE IF NOT EXISTS `Comment` (
+  `idComment` int(11) NOT NULL AUTO_INCREMENT,
+  `idGame` int(11) NOT NULL,
+  `idUser` int(11) NOT NULL,
+  PRIMARY KEY (`idComment`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=60 ;
+
+--
+-- Estructura de tabla para la tabla `Tag`
+--
+
+CREATE TABLE IF NOT EXISTS `Tag` (
+  `idTag` int(11) NOT NULL AUTO_INCREMENT,
+  `idGame` int(11) NOT NULL,
+  `tag` varchar(255) NOT NULL,
+  PRIMARY KEY (`idTag`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=27 ;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `GameView` AS select `Game`.`idGame` AS `idGame`,`Game`.`name` AS `name`,`Game`.`grantPublicAccess` AS `grantPublicAccess`,`Game`.`secretGame` AS `secretGame`,`Game`.`privateKey` AS `privateKey`,`Game`.`idCategory` AS `idCategory`,`Game`.`creationDate` AS `creationDate`,(select count(`Comment`.`idComment`) from `Comment` where (`Comment`.`idGame` = `Game`.`idGame`)) AS `timesCommented`,(select count(`GameLike`.`likeId`) from `GameLike` where (`GameLike`.`gameId` = `Game`.`idGame`)) AS `popularity`,(select count(`GameScore`.`idScore`) from `GameScore` where (`GameScore`.`idGame` = `Game`.`idGame`)) AS `timesPlayed`,(select count(`GameInstance`.`idGameInstance`) from `GameInstance` where ((`GameInstance`.`idGame` = `Game`.`idGame`) and (`GameInstance`.`state` = 'INIT'))) AS `activity` from `Game`;
+
+--
+-- Estructura para la vista `GameSimilitudeView`
+--
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `GameSimilitudeView` AS select `tag1`.`idGame` AS `idGame`,`tag2`.`idGame` AS `similarToIdGame`,`tag1`.`tag` AS `similitude` from (`Tag` `tag1` join `Tag` `tag2` on(((`tag1`.`tag` = `tag2`.`tag`) and (`tag1`.`idGame` <> `tag2`.`idGame`)))) union select `game1`.`idGame` AS `idGame`,`game2`.`idGame` AS `similarToIdGame`,`Category`.`name` AS `similitude` from ((`Game` `game1` join `Game` `game2` on(((`game1`.`idCategory` = `game2`.`idCategory`) and (`game1`.`idGame` <> `game2`.`idGame`)))) join `Category` on((`game1`.`idCategory` = `Category`.`idCategory`))) order by `idGame`,`similarToIdGame`;
+
+--
+-- Estructura para la vista `TotalGameSimilitudeView`
+--
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `TotalGameSimilitudeView` AS select `GameSimilitudeView`.`idGame` AS `idGame`,`GameSimilitudeView`.`similarToIdGame` AS `similarToIdGame`,count(0) AS `totalSimilitude` from `GameSimilitudeView` group by `GameSimilitudeView`.`idGame`,`GameSimilitudeView`.`similarToIdGame`;

@@ -19,6 +19,6 @@
 		<!-- Pretty print the SQL in the log and console -->
 		<property name="format_sql">${devMode}</property>
 		
-		<mapping package="edu.uoc.svrKpax.model.vo"/>
+		<mapping package="uoc.edu.svrKpax.model.vo"/>
 	</session-factory>
 </hibernate-configuration>
