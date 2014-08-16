@@ -16,7 +16,7 @@ public class GameDaoImpl extends HibernateDaoSupport implements GameDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Game> getAllGames() {
-		return getHibernateTemplate().find("from Game");
+		return getHibernateTemplate().find("from Game where grantPublicAccess = 1");
 	}
 
 	@Override
@@ -76,7 +76,15 @@ public class GameDaoImpl extends HibernateDaoSupport implements GameDao {
 	public List<Game> getNotDeveloperGame(String developer) {
 		DetachedCriteria criteria =  
 	               DetachedCriteria.forClass(Game.class);
-	   criteria.add(Restrictions.ne("developer", developer));
+	   criteria.add(Restrictions.ne("developer", developer)).add(Restrictions.eq("publicAcces", 1));
+	   return (List<Game>)getHibernateTemplate().findByCriteria(criteria);
+	}
+	
+	@Override
+	public List<Game> getUnauthorizedGame(){
+		DetachedCriteria criteria =  
+	               DetachedCriteria.forClass(Game.class);
+	   criteria.add(Restrictions.eq("publicAcces", 0));
 	   return (List<Game>)getHibernateTemplate().findByCriteria(criteria);
 	}
 

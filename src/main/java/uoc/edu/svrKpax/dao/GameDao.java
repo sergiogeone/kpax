@@ -15,4 +15,5 @@ public interface GameDao {
 	public List<Game> getUserGames(String username);
 	public List<Game> getDeveloperGame(String developer);
 	public List<Game> getNotDeveloperGame(String developer);
+	public List<Game> getUnauthorizedGame();
 }

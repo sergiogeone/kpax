@@ -123,6 +123,15 @@ public class Games {
 	}
 	
 	@POST
+	@Path("/{id}/auth")
+	public String authorizeGame(@FormParam("secretSession") String campusSession, @PathParam("id") int idGame){
+		if(gBo.authorizeGame(campusSession, idGame))
+			return "OK";
+		else
+			return "ERROR";
+	}
+	
+	@POST
 	@Path("/delete/{id}")
 	public String delGame(@FormParam("secretSession") String campusSession,@PathParam("id") String idGame){
 		if(gBo.delGame(campusSession, Integer.parseInt(idGame)))return "OK";
@@ -144,6 +153,14 @@ public class Games {
 	@Produces( { MediaType.APPLICATION_JSON ,MediaType.APPLICATION_XML})
 	public List<Game> getNotDeveloperGames (@PathParam("param") String campusSession, @PathParam("developer") String developer){
 		return gBo.listNotDeveloperGames(campusSession, developer);
+	}
+	
+	@GET
+	@Path("/{param}/getUnauthorizedList/")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces( { MediaType.APPLICATION_JSON ,MediaType.APPLICATION_XML})
+	public List<Game> getUnauthorizedGames (@PathParam("param") String campusSession) {
+		return gBo.listUnauthorizedGames(campusSession);
 	}
 	
 	/* categories */

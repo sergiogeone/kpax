@@ -53,7 +53,7 @@ public class GameBOImp implements GameBO {
 				Game objGame = new Game();
 				objGame.setIdGame(idGame);
 				objGame.setName(nameGame);
-				objGame.setPublicAcces(1);
+				objGame.setPublicAcces(0);
 				objGame.setSecretGame(Security.getIdGame());
 				objGame.setPrivateKey(Security.getIdSession());
 
@@ -151,7 +151,7 @@ public class GameBOImp implements GameBO {
 				objGame.setIdGame(idGame);
 				objGame.setName(nameGame);
 				objGame.setDeveloper(developer);
-				objGame.setPublicAcces(1);
+				objGame.setPublicAcces(0);
 				objGame.setSecretGame(Security.getIdGame());
 				objGame.setPrivateKey(Security.getIdSession());
 				objGame.setIdCategory(idCategory);
@@ -262,5 +262,28 @@ public class GameBOImp implements GameBO {
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public List<Game> listUnauthorizedGames(String campusSession){
+		if (sBo.validateSession(campusSession) != null) {
+				return gDao.getUnauthorizedGame();
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean authorizeGame(String campusSession, int idGame){
+		try {
+			if (sBo.validateSession(campusSession) != null) {
+				Game objGame = gDao.getGame(idGame);
+				objGame.setPublicAcces(1);
+				gDao.addGame(objGame);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 }

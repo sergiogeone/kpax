@@ -17,5 +17,7 @@ public interface GameBO {
 	public Game getGame(String idGame,String campusSession);
 	public List<Game> listDeveloperGames(String campusSession, String developer);
 	public List<Game> listNotDeveloperGames(String campusSession, String developer);
+	public List<Game> listUnauthorizedGames(String campusSession);
+	public boolean authorizeGame(String campusSession, int idGame);
 }
 
